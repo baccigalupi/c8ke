@@ -10,6 +10,7 @@ end
 
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'minitest/pride'
 require 'wrong/adapters/minitest'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -17,5 +18,6 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'c8ke'
 
 Wrong.config.alias_assert :expect
+Wrong.config.color
 
 MiniTest::Unit.autorun
