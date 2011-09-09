@@ -8,7 +8,7 @@ module C8ke
     end
     
     def envjs_path
-      File.dirname(__FILE__) + "/../vendor/env-js/envjs/rubyracer.js"
+      File.dirname(__FILE__) + "/../vendor/envjs/rubyracer.js"
     end
   end
 end

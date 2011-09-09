@@ -4,35 +4,32 @@ module C8ke
     
     def initialize
       super
-      configure
+      configure_ruby
+      configure_envjs
     end
     
-    def configure
-      self['Ruby'] = {
-        'gc' => lambda{ GC.start() },
-        'CONFIG' => CONFIG
-      }
-      Module.included_modules.each{|x| 
-        # puts "adding #{x}"
-        self['Ruby'][x.to_s] = x
-      }
-      Module.constants.each{|x| 
-        begin # sexp related constants fail to load
-          self['Ruby'][x.to_s] = Kernel.eval(x.to_s) 
-        rescue 
-          nil 
-        end
-      }
-      Kernel.global_variables.each{|x|
-        # puts "adding global variable #{x}"
-        self['Ruby'][x.to_s] = Kernel.eval(x.to_s)
-      }
-      Kernel.methods.each{|x| 
-        # puts "adding method #{x}"
-        self['Ruby'][x.to_s] = Kernel.method(x)
-      }
+    def configure_ruby
+      self['Ruby'] = { 'gc' => lambda{ GC.start } }
       
+      # add some important constants
+      [ 
+        Kernel, Object, Module, Class, String, Array, Hash, ENV, IO,
+        CONFIG, STDIN, STDOUT, STDERR, ARGF, File, Dir, Time,
+        RUBY_VERSION, RUBY_PLATFORM, RUBY_PATCHLEVEL, RUBY_REVISION, RUBY_DESCRIPTION,
+        ARGV, RbConfig, Config, URI
+      ].each {|c| self['Ruby'][c.to_s] = c }
       
+      # adding some globals that seem good
+      [ $stdin, $stdout, $stderr, $FILENAME, $LOAD_PATH ].each { |c| self['Ruby'][c.to_s.gsub(/^\$/, '')] = c }
+      
+      # adding Kernel methods
+      [ 
+        'warn', 'eval', 'caller', 'puts', 'rand', 
+        'exec', 'system', 'sleep', 'pp', 'object_id'
+      ].each { |m| self['Ruby'][m] = Kernel.method(m) }
+    end
+
+    def configure_envjs
       self['__this__']  = self
       self['sync']      = lambda{|fn| Proc.new{|*args| fn.call(*args) }}
       self['spawn']     = lambda{|fn| fn.call}
@@ -44,6 +41,7 @@ module C8ke
         new_runtime.eval('var t = new Function(); t._eval = __this__._eval;t;') 
       end
       self['HTTPConnection'] = HTTPConnection.new
+      self['envjs_dir'] = File.expand_path(File.dirname(__FILE__) + "/../vendor/envjs")
     end
   end
   
