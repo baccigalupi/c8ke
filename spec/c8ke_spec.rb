@@ -6,14 +6,4 @@ describe C8ke do
       assert { defined?(V8) == 'constant' }
     end
   end
-  
-  describe C8ke::Browser do
-    before do
-      @browser = C8ke::Browser.new
-    end
-    
-    it 'should include envjs' do
-      assert { true == true }
-    end
-  end
 end

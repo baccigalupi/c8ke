@@ -1,4 +1,0 @@
-#! /bin/bash
-cd ../lib/vendor # this is pretty lame, it should be more robust!
-git clone https://github.com/envjs/env-js.git
-# also the .git has to be removed

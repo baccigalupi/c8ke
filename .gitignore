@@ -15,3 +15,5 @@ pkg
 *.tmproj
 tmtags
 *.swp
+
+external/*
