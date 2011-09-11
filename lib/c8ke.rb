@@ -1,10 +1,3 @@
-begin
-  require 'bundler'
-rescue
-  require 'rubygems'
-  require 'bundler'
-end
-
 Bundler.require
 require 'v8' # TODO: change the bundler declaration to include as this library
 

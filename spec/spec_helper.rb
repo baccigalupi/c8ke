@@ -20,4 +20,9 @@ require 'c8ke'
 Wrong.config.alias_assert :expect
 Wrong.config.color
 
+def js(str)
+  raise "@browser is not setup correctly" unless @browser.is_a?(C8ke::Browser)
+  @browser.eval(str)
+end
+
 MiniTest::Unit.autorun

@@ -6,11 +6,12 @@ module C8ke
       super
       configure_ruby
       configure_envjs
+      load(c8ke_path)
       # load( racer_path ) 
     end
     
-    def racer_path
-      vendor_path + "/rubyracer.js"
+    def c8ke_path
+      vendor_path + "/c8ke.js"
     end
     
     def vendor_path
@@ -18,31 +19,21 @@ module C8ke
     end
     
     def configure_ruby
-      # ruby = { 
-      #   'gc' => lambda{ GC.start },
-      # }
-      # 
-      # # add some important constants
-      # [ 
-      #   Kernel, Object, Module, Class, String, Array, Hash, 
-      #   ENV, IO, STDIN, STDOUT, STDERR, ARGF, File, Dir, Time,
-      #   RUBY_VERSION, RUBY_PLATFORM, RUBY_PATCHLEVEL, RUBY_REVISION, RUBY_DESCRIPTION,
-      #   ARGV, RbConfig, Config, URI, Process
-      # ].each {|c| ruby[c.to_s] = c }
-      # 
-      # # adding some globals that seem good
-      # [ $stdin, $stdout, $stderr, $FILENAME, $LOAD_PATH ].each { |c| ruby[c.to_s] = c }
-      # 
-      # # adding Kernel methods
-      # [ 
-      #   'warn', 'eval', 'caller', 'puts', 'rand', 
-      #   'exec', 'system', 'sleep', 'pp', 'object_id'
-      # ].each { |m| ruby[m] = Kernel.method(m) }
-      # 
-      # ruby['ARGV'] ||= [nil]
-      # ruby['CONFIG'] = CONFIG
-      # 
-      # self['Ruby'] = ruby
+      ruby = { 
+        'gc' => lambda{ GC.start },
+        'puts' => Kernel.method(:puts),
+        'warn' => Kernel.method(:warn),
+        'caller' => Kernel.method(:caller),
+        'rand' => Kernel.method(:rand),
+        'sleep' => Kernel.method(:sleep),
+        'command_line' => lambda { |command| `#{command}` },
+        'raise' => lambda { |message| raise( message ) },
+        'version' => RUBY_DESCRIPTION,
+        'File' => File
+      }
+      self['Ruby'] = ruby
+      self['print'] = lambda { |message| puts message }
+      
     end
 
     def configure_envjs
@@ -57,17 +48,20 @@ module C8ke
       #    new_runtime.eval('var t = new Function(); t._eval = __this__._eval;t;') 
       #  end
       #  self['HTTPConnection'] = HTTPConnection.new
-      # self['root_dir'] = vendor_path
     end
     
-    def path
-      @path ||= []
+    def paths
+      @paths ||= []
+    end
+    
+    def add_to_path( file_path )
+      new_path = file_path.match(/\.[a-z]+$/i) ? File.dirname( file_path ) : file_path
+      paths << new_path unless paths.include?( new_path )
+      self['Paths'] = paths
     end
     
     def load( file_path )
-      new_path = File.expand_path( File.dirname( file_path ) )
-      path << new_path unless path.include?( new_path )
-      self['path'] = path 
+      add_to_path( file_path )
       super
     end
     
