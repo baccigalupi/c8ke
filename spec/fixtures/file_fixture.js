@@ -1,2 +1,3 @@
 var FileFixture = {
+  foo : 'bar'
 };
