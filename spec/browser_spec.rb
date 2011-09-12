@@ -79,7 +79,7 @@ describe C8ke::Browser do
       end
       
       it 'path can be added to manually' do
-        @browser.add_to_path(@fixture_path)
+        @browser.add_path(@fixture_path)
         assert{ @browser.paths.include?( @fixture_path ) }
         assert{ js("Paths").include?( @fixture_path ) }
       end
@@ -97,9 +97,31 @@ describe C8ke::Browser do
       
       it 'will look in each of the Paths' do
         spec_dir = File.dirname(__FILE__)
-        @browser.add_to_path(spec_dir)
-        @browser.add_to_path(@fixture_path)
+        @browser.add_path(spec_dir)
+        @browser.add_path(@fixture_path)
         assert { js("File.at('file_fixture.js')").path == spec_dir + '/fixtures/file_fixture.js' }
+      end
+      
+      it 'makes #add_path available in the javascript as Paths.add' do
+        deny { js("Paths").include?( @fixture_path ) }
+        js("Paths.add('#{@fixture_path}')")
+        assert { js("Paths").include?( @fixture_path ) }
+      end
+    end
+    
+    describe 'require(file_path)' do
+      it 'raises an error if it cannot find the file' do
+        begin
+          js("require('/tmp/foofoo.bar')")
+        rescue Exception => e
+          assert { e.message == "Cannot find required file: /tmp/foofoo.bar"}
+        end
+      end
+      
+      it 'makes the code available' do
+        @browser.add_path(@fixture_path)
+        js("require('file_fixture.js')")
+        assert { js('FileFixture.foo') == 'bar' }
       end
     end
   end

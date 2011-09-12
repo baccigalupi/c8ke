@@ -1,24 +1,14 @@
+require 'set'
+
 module C8ke
   class Browser < V8::Context
-    include Config
-    
     def initialize
       super
-      configure_ruby
-      configure_envjs
-      load(c8ke_path)
-      # load( racer_path ) 
+      configure
+      load( File.expand_path(File.dirname(__FILE__))  + '/c8ke.js' )
     end
     
-    def c8ke_path
-      vendor_path + "/c8ke.js"
-    end
-    
-    def vendor_path
-      File.expand_path(File.dirname(__FILE__) + "/../vendor")
-    end
-    
-    def configure_ruby
+    def configure
       ruby = { 
         'gc' => lambda{ GC.start },
         'puts' => Kernel.method(:puts),
@@ -29,39 +19,27 @@ module C8ke
         'command_line' => lambda { |command| `#{command}` },
         'raise' => lambda { |message| raise( message ) },
         'version' => RUBY_DESCRIPTION,
-        'File' => File
+        'File' => File,
+        'add_path' => lambda{ |path| add_path(path) }
       }
       self['Ruby'] = ruby
       self['print'] = lambda { |message| puts message }
       
     end
-
-    def configure_envjs
-      # self['__this__']  = self
-      #  self['sync']      = lambda{|fn| Proc.new{|*args| fn.call(*args) }}
-      #  self['spawn']     = lambda{|fn| fn.call}
-      #  self['print']     = lambda{|msg| puts msg}
-      #  self['fopen']     = lambda{|name, mode| File.open(name, mode)}
-      #  self['new']       = lambda do
-      #    new_runtime = self.class.new
-      #    new_runtime['_eval'] = lambda{|script| new_runtime.eval(script)}
-      #    new_runtime.eval('var t = new Function(); t._eval = __this__._eval;t;') 
-      #  end
-      #  self['HTTPConnection'] = HTTPConnection.new
-    end
+    
     
     def paths
       @paths ||= []
     end
     
-    def add_to_path( file_path )
+    def add_path( file_path )
       new_path = file_path.match(/\.[a-z]+$/i) ? File.dirname( file_path ) : file_path
-      paths << new_path unless paths.include?( new_path )
+      paths << new_path unless paths.include?(new_path)
       self['Paths'] = paths
     end
     
     def load( file_path )
-      add_to_path( file_path )
+      add_path( file_path )
       super
     end
     
