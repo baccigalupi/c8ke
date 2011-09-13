@@ -1,3 +1,0 @@
-var FileFixture = {
-  foo : 'bar'
-};

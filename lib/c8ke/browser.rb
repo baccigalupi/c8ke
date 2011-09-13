@@ -24,18 +24,22 @@ module C8ke
       }
       self['Ruby'] = ruby
       self['print'] = lambda { |message| puts message }
-      
     end
     
-    
+    # TODO: paths should be a stack, so that looks in last added first,
+    # also when going deeper into requires, push and then pop back off
     def paths
       @paths ||= []
     end
     
     def add_path( file_path )
       new_path = file_path.match(/\.[a-z]+$/i) ? File.dirname( file_path ) : file_path
-      paths << new_path unless paths.include?(new_path)
-      self['Paths'] = paths
+      paths.unshift(new_path) unless paths.include?(new_path)
+      if self['Paths']
+        self['Paths']['available'] = paths
+      else
+        self["Ruby"]['paths'] = paths
+      end
     end
     
     def load( file_path )
@@ -45,45 +49,6 @@ module C8ke
     
     def to_s
       "<#{self.class} ##{object_id}>"
-    end
-  end
-  
-  class HTTPConnection
-    def connect(host, port)
-      Net::HTTP.start(host, port)
-    end
-    
-    def request(httpMethod, path)
-      klass = case httpMethod
-      when "GET" 
-        Net::HTTP::Get
-      when "PUT"
-        Net::HTTP::Put
-      when "POST"
-        Net::HTTP::Post
-      when "HEAD"
-        Net::HTTP::Head
-      when "DELETE"
-        Net::HTTP::Delete
-      end
-      klass.new(path) if klass
-    end
-    
-    def go(connection, request, headers, data)
-      headers.each do |key,value| 
-        request.add_field(key,value)
-      end
-      response, body = connection.request(request, data)
-      respheaders = Hash.new
-      response.each_header do |name, value|
-        respheaders.store(name, value)
-      end
-      response['body'] = body
-      [response, respheaders]
-    end
-    
-    def finish(connection)
-      connection.finish if connection.started?
     end
   end
 end

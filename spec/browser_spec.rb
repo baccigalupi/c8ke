@@ -66,22 +66,22 @@ describe C8ke::Browser do
   end
   
   describe 'file management' do
-    describe 'Paths' do
+    describe 'Paths.available' do
       it 'loading files makes the directory available in the path' do
-        @browser.load(@fixture_path + '/file_fixture.js')
-        assert { js( "Paths").include?(@fixture_path) }
+        @browser.load(@fixture_path + '/require_fixture.js')
+        assert { js( "Paths.available").include?(@fixture_path) }
       end
     
       it 'loading a file twice does not add the path twice' do
-        @browser.load(@fixture_path + '/file_fixture.js')
-        @browser.load(@fixture_path + '/file_fixture.js')
-        assert { js("Paths").select{|p| p == @fixture_path }.size == 1 }
+        @browser.load(@fixture_path + '/require_fixture.js')
+        @browser.load(@fixture_path + '/require_fixture.js')
+        assert { js("Paths.available").select{|p| p == @fixture_path }.size == 1 }
       end
       
       it 'path can be added to manually' do
         @browser.add_path(@fixture_path)
         assert{ @browser.paths.include?( @fixture_path ) }
-        assert{ js("Paths").include?( @fixture_path ) }
+        assert{ js("Paths.available").include?( @fixture_path ) }
       end
     end
     
@@ -95,17 +95,17 @@ describe C8ke::Browser do
         assert { js("File.at('#{temp.path}')").path == temp.path }
       end
       
-      it 'will look in each of the Paths' do
+      it 'will look in each of the Paths.available' do
         spec_dir = File.dirname(__FILE__)
         @browser.add_path(spec_dir)
         @browser.add_path(@fixture_path)
-        assert { js("File.at('file_fixture.js')").path == spec_dir + '/fixtures/file_fixture.js' }
+        assert { js("File.at('require_fixture.js')").path == spec_dir + '/fixtures/require_fixture.js' }
       end
       
       it 'makes #add_path available in the javascript as Paths.add' do
-        deny { js("Paths").include?( @fixture_path ) }
+        deny { js("Paths.available").include?( @fixture_path ) }
         js("Paths.add('#{@fixture_path}')")
-        assert { js("Paths").include?( @fixture_path ) }
+        assert { js("Paths.available").include?( @fixture_path ) }
       end
     end
     
@@ -120,8 +120,16 @@ describe C8ke::Browser do
       
       it 'makes the code available' do
         @browser.add_path(@fixture_path)
-        js("require('file_fixture.js')")
-        assert { js('FileFixture.foo') == 'bar' }
+        js("require('require_fixture.js')")
+        assert { js('RequireFixture.foo') == 'bar' }
+      end
+      
+      it 'can go several layers deep in the require chain' do
+        @browser.add_path(@fixture_path)
+        js("require('deep.js')")
+        assert { js('Deep.level') == 'one' }
+        assert { js('Deeply.level') == 'two' }
+        assert { js('Deeper.level') == 'three' }
       end
     end
   end

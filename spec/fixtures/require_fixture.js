@@ -1,0 +1,3 @@
+var RequireFixture = {
+  foo : 'bar'
+};
