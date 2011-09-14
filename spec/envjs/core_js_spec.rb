@@ -5,6 +5,19 @@ describe 'core.js' do
   
   before do
     @browser = C8ke::Browser.new
+    js(
+      <<-JS
+        var C8ke = {};
+        C8ke.events = [];
+        C8ke.add_event = function(e){ C8ke.events.push(e); };
+        C8ke.clear_events = function(e){ C8ke.events = []; };
+        C8ke.mock = function(message) { C8ke.add_event(message) };
+      JS
+    )
+  end
+  
+  def events
+    js "C8ke.events"
   end
   
   it 'defines Envjs basic identifiers' do
@@ -19,7 +32,21 @@ describe 'core.js' do
     # assert{ js("Envjs.tmpdir") ==       C8ke::Browser::ENV['TMPDIR'] }
   end
   
-  # Envjs.exit
+  it 'does not crash the thread when it exits' do
+    js('Envjs.exit()')
+  end
+  
+  describe 'console' do
+    it 'Envjs.log' do
+      js(
+        <<-JS
+          print = C8ke.mock;
+          Envjs.log('foo you');
+        JS
+      )
+      assert { events.include?('foo you') }
+    end
+  end
   
   # Envjs.log 
   # Envjs.Logging
