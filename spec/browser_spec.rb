@@ -91,8 +91,8 @@ describe C8ke::Browser do
       end
       
       it 'will look at an absolute location if passed an absolute path' do
-        temp = Tempfile.new 'foo'
-        assert { js("File.at('#{temp.path}')").path == temp.path }
+        path = File.expand_path(@fixture_path + "/require_fixture.js")
+        assert { js("File.at('#{path}')").path == path }
       end
       
       it 'will look in each of the Paths.available' do
@@ -100,6 +100,11 @@ describe C8ke::Browser do
         @browser.add_path(spec_dir)
         @browser.add_path(@fixture_path)
         assert { js("File.at('require_fixture.js')").path == spec_dir + '/fixtures/require_fixture.js' }
+      end
+      
+      it 'will look for a .js file when not given a file type' do
+        @browser.add_path(@fixture_path)
+        assert { js("File.at('require_fixture')").path == @fixture_path + '/require_fixture.js' }
       end
       
       it 'makes #add_path available in the javascript as Paths.add' do
@@ -111,10 +116,11 @@ describe C8ke::Browser do
     
     describe 'require(file_path)' do
       it 'raises an error if it cannot find the file' do
+        path = File.expand_path(@fixture_path + '/not_there')
         begin
-          js("require('/tmp/foofoo.bar')")
+          js("require('#{path}')")
         rescue Exception => e
-          assert { e.message == "Cannot find required file: /tmp/foofoo.bar"}
+          assert { e.message == "Cannot find required file: #{path}"}
         end
       end
       
