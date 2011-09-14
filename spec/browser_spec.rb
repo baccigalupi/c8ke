@@ -137,6 +137,28 @@ describe C8ke::Browser do
         assert { js('Deeply.level') == 'two' }
         assert { js('Deeper.level') == 'three' }
       end
+      
+      it 'makes #add_path available in the javascript as Paths.add' do
+        deny { js("Paths.available").include?( @fixture_path ) }
+        js("Paths.add('#{@fixture_path}')")
+        assert { js("Paths.available").include?( @fixture_path ) }
+      end
+    end
+    
+    describe 'require(file_path)' do
+      it 'raises an error if it cannot find the file' do
+        begin
+          js("require('/tmp/foofoo.bar')")
+        rescue Exception => e
+          assert { e.message == "Cannot find required file: /tmp/foofoo.bar"}
+        end
+      end
+      
+      it 'makes the code available' do
+        @browser.add_path(@fixture_path)
+        js("require('file_fixture.js')")
+        assert { js('FileFixture.foo') == 'bar' }
+      end
     end
   end
 end

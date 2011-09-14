@@ -26,8 +26,6 @@ module C8ke
       self['print'] = lambda { |message| puts message }
     end
     
-    # TODO: paths should be a stack, so that looks in last added first,
-    # also when going deeper into requires, push and then pop back off
     def paths
       @paths ||= []
     end
