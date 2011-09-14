@@ -1,7 +1,9 @@
-require 'set'
-
 module C8ke
   class Browser < V8::Context
+    include Config
+    Config = CONFIG
+    Env = ENV
+    
     def initialize
       super
       configure
@@ -9,6 +11,7 @@ module C8ke
     end
     
     def configure
+      self['print'] = lambda { |message| puts message }
       ruby = { 
         'gc' => lambda{ GC.start },
         'puts' => Kernel.method(:puts),
@@ -23,7 +26,16 @@ module C8ke
         'add_path' => lambda{ |path| add_path(path) }
       }
       self['Ruby'] = ruby
-      self['print'] = lambda { |message| puts message }
+      
+      self['Ruby']['CONFIG'] = {}
+      CONFIG.each do |key, value|
+        self['Ruby']['CONFIG'][key] = value
+      end
+      
+      self['Ruby']['ENV'] = {}
+      ENV.each do |key, value|
+        self['Ruby']['ENV'][key] = value
+      end
     end
     
     def paths

@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'tempfile'
 
 describe C8ke::Browser do
   before do
