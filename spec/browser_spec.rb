@@ -62,6 +62,14 @@ describe C8ke::Browser do
     it 'provides Ruby version information' do
       assert { js('Ruby.version') == RUBY_DESCRIPTION }
     end
+    
+    it 'makes $stdout available' do
+      assert { js("Ruby.$stdout") == $stdout }
+    end
+    
+    it 'makes $stderr available' do
+      assert { js("Ruby.$stderr") == $stderr }
+    end
   end
   
   describe 'file management' do

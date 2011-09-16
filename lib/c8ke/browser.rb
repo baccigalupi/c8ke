@@ -23,7 +23,9 @@ module C8ke
         'raise' => lambda { |message| raise( message ) },
         'version' => RUBY_DESCRIPTION,
         'File' => File,
-        'add_path' => lambda{ |path| add_path(path) }
+        'add_path' => lambda{ |path| add_path(path) },
+        '$stdout' => $stdout,
+        '$stderr' => $stderr
       }
       self['Ruby'] = ruby
       

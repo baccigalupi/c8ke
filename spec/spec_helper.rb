@@ -25,4 +25,21 @@ def js(str)
   @browser.eval(str)
 end
 
+def setup_browser_and_mocking
+  @browser = C8ke::Browser.new
+  js(
+    <<-JS
+      var C8ke = {};
+      C8ke.events = [];
+      C8ke.add_event = function(e){ C8ke.events.push(e); };
+      C8ke.clear_events = function(e){ C8ke.events = []; };
+      C8ke.mock = function(message) { C8ke.add_event(message) };
+    JS
+  )
+end
+
+def events
+  js "C8ke.events"
+end
+
 MiniTest::Unit.autorun

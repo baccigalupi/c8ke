@@ -4,20 +4,7 @@ describe 'core.js' do
   include Config
   
   before do
-    @browser = C8ke::Browser.new
-    js(
-      <<-JS
-        var C8ke = {};
-        C8ke.events = [];
-        C8ke.add_event = function(e){ C8ke.events.push(e); };
-        C8ke.clear_events = function(e){ C8ke.events = []; };
-        C8ke.mock = function(message) { C8ke.add_event(message) };
-      JS
-    )
-  end
-  
-  def events
-    js "C8ke.events"
+    setup_browser_and_mocking
   end
   
   it 'defines Envjs basic identifiers' do
@@ -36,26 +23,6 @@ describe 'core.js' do
     js('Envjs.exit()')
   end
   
-  describe 'console' do
-    it 'Envjs.log' do
-      js(
-        <<-JS
-          print = C8ke.mock;
-          Envjs.log('foo you');
-        JS
-      )
-      assert { events.include?('foo you') }
-    end
-  end
-  
-  # Envjs.log 
-  # Envjs.Logging
-  # Envjs.trace
-  # Envjs.lineSource
-  # Envjs.readConsole
-  # Envjs.prompt
-  # Envjs.CURSOR
-  # Envjs.repl
   
   # Envjs.eval
   # Envjs.sync
