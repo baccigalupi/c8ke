@@ -31,8 +31,8 @@ def setup_browser_and_mocking
     <<-JS
       var C8ke = {};
       C8ke.events = [];
-      C8ke.add_event = function(e){ C8ke.events.push(e); };
-      C8ke.clear_events = function(e){ C8ke.events = []; };
+      C8ke.add_event = function(e) { C8ke.events.push(e); };
+      C8ke.clear_events = function(e) { C8ke.events = []; };
       C8ke.mock = function(message) { C8ke.add_event(message) };
     JS
   )

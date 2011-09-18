@@ -23,9 +23,39 @@ describe 'core.js' do
     js('Envjs.exit()')
   end
   
+  describe 'Envjs.eval' do
+    it 'evaluates in the World context' do
+      js <<-JS
+        var thingy;
+        var fn = function(){
+          Envjs.eval(World, "thingy = 'foo'");
+        };
+        fn();
+      JS
+      assert { js('thingy') == 'foo' }
+    end
+    
+    # it "should eval in another context ???"
+  end
   
-  # Envjs.eval
-  # Envjs.sync
+  describe 'js threadless-ness' do
+    it 'Envjs.sync does not work' do
+      output = capturing{ js 'Envjs.sync()' }
+      assert { output.include?("c8ke js is threadless. Syncing is not possible!") }
+    end
+    
+    it 'Envjs.spawn just calls the function' do
+      js <<-JS
+        var foo = function(){print('foo');};
+      JS
+      output = capturing { js "Envjs.spawn(foo)" }
+      assert { output.include? 'foo' }
+    end
+  end
+  
+  
+  
+  
   # Envjs.spawn
   # Envjs.sleep
   
@@ -97,4 +127,5 @@ describe 'core.js' do
   # Envjs.windows
   # Envjs.loadFrame
   # Envjs.unloadFrame
+  
 end

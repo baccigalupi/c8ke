@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe 'core.js' do
+describe 'console.js' do
   before do
     setup_browser_and_mocking
   end
@@ -26,8 +26,14 @@ describe 'core.js' do
   it 'makes the console object available' do
     output = capturing{ js("console.log('in the console.log');") }
     assert { output.include?('in the console.log') }
-  end 
+  end
+
+  describe 'log' do
+    it 'setting the level should obscure output at a higher level'
+    it 'should pretty print the object'
+  end
   
+  # ??
   # Envjs.Logging
   # Envjs.readConsole
 end
