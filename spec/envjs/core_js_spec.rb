@@ -53,12 +53,25 @@ describe 'core.js' do
     end
   end
   
+  describe 'Envjs.sleep' do
+    it 'will call Ruby.sleep in milliseconds' do
+      js <<-JS
+        Ruby.sleep = function(amount) { C8ke.add_event("sleeping for " + amount + " seconds") }
+        Envjs.sleep(1500);
+      JS
+      assert { events.include?( "sleeping for 1.5 seconds" ) }
+    end
+  end
   
-  
-  
-  # Envjs.spawn
-  # Envjs.sleep
-  
+  describe 'Envjs.guid' do
+    it 'return a global incrementing integer' do
+      assert { js("Envjs.guid()") == 1 }
+      assert { js("Envjs.guid()") == 2 }
+      assert { js("Envjs.guid()") == 3 }
+      @browser = C8ke::Browser.new
+      assert { js("Envjs.guid()") == 1 }
+    end
+  end
   
   # Envjs.proxy
   

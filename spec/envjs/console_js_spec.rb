@@ -29,11 +29,22 @@ describe 'console.js' do
   end
 
   describe 'log' do
-    it 'setting the level should obscure output at a higher level'
-    it 'should pretty print the object'
+    it 'is automatically sent to warn level, and prints to the console' do
+      output = capturing{ js " log.warn('Whoa!') " }
+      assert { output.include?('Whoa!') }
+    end
+    
+    it 'the log level can be adjusted' do
+      output = capturing { 
+        js <<-JS
+          log.level = 0; // DEBUG
+          log.debug('debugging ... please hold');
+        JS
+      }
+      assert { output.include?( 'debugging ... please hold' ) }
+    end
   end
   
   # ??
-  # Envjs.Logging
   # Envjs.readConsole
 end
