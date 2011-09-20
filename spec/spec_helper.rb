@@ -42,4 +42,5 @@ def events
   js "C8ke.events"
 end
 
+
 MiniTest::Unit.autorun

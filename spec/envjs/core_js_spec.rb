@@ -24,11 +24,11 @@ describe 'core.js' do
   end
   
   describe 'Envjs.eval' do
-    it 'evaluates in the World context' do
+    it 'evaluates in the __this__ context' do
       js <<-JS
         var thingy;
         var fn = function(){
-          Envjs.eval(World, "thingy = 'foo'");
+          Envjs.eval(__this__, "thingy = 'foo'");
         };
         fn();
       JS
@@ -39,9 +39,10 @@ describe 'core.js' do
   end
   
   describe 'js threadless-ness' do
-    it 'Envjs.sync does not work' do
-      output = capturing{ js 'Envjs.sync()' }
-      assert { output.include?("c8ke js is threadless. Syncing is not possible!") }
+    it 'Envjs.sync does not work and it will just call the function directly' do
+      output = capturing{ js 'Envjs.sync(function(){ C8ke.add_event("in the sync") });' }
+      assert { output.include?("c8ke js is threadless") }
+      assert { events.include?('in the sync')}
     end
     
     it 'Envjs.spawn just calls the function' do

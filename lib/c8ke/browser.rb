@@ -1,8 +1,6 @@
 module C8ke
   class Browser < V8::Context
     include Config
-    Config = CONFIG
-    Env = ENV
     
     def initialize
       super
@@ -39,6 +37,7 @@ module C8ke
       ENV.each do |key, value|
         self['Ruby']['ENV'][key] = value
       end
+      self[RestClient] = RestClient
     end
     
     def paths
