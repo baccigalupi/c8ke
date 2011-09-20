@@ -92,32 +92,34 @@ describe C8ke::Browser do
       end
     end
     
-    describe 'File.at(path)' do
-      it 'will return false if a file is not found' do
-        assert( js("File.at('/tmp/foo.footy')") == false )
-      end
+    describe 'File' do
+      describe '.at(path)' do
+        it 'will return false if a file is not found' do
+          assert( js("File.at('/tmp/foo.footy')") == false )
+        end
       
-      it 'will look at an absolute location if passed an absolute path' do
-        path = File.expand_path(@fixture_path + "/require_fixture.js")
-        assert { js("File.at('#{path}')").path == path }
-      end
+        it 'will look at an absolute location if passed an absolute path' do
+          path = File.expand_path(@fixture_path + "/require_fixture.js")
+          assert { js("File.at('#{path}')").path == path }
+        end
       
-      it 'will look in each of the Paths.available' do
-        spec_dir = File.dirname(__FILE__)
-        @browser.add_path(spec_dir)
-        @browser.add_path(@fixture_path)
-        assert { js("File.at('require_fixture.js')").path == spec_dir + '/fixtures/require_fixture.js' }
-      end
+        it 'will look in each of the Paths.available' do
+          spec_dir = File.dirname(__FILE__)
+          @browser.add_path(spec_dir)
+          @browser.add_path(@fixture_path)
+          assert { js("File.at('require_fixture.js')").path == spec_dir + '/fixtures/require_fixture.js' }
+        end
       
-      it 'will look for a .js file when not given a file type' do
-        @browser.add_path(@fixture_path)
-        assert { js("File.at('require_fixture')").path == @fixture_path + '/require_fixture.js' }
-      end
+        it 'will look for a .js file when not given a file type' do
+          @browser.add_path(@fixture_path)
+          assert { js("File.at('require_fixture')").path == @fixture_path + '/require_fixture.js' }
+        end
       
-      it 'makes #add_path available in the javascript as Paths.add' do
-        deny { js("Paths.available").include?( @fixture_path ) }
-        js("Paths.add('#{@fixture_path}')")
-        assert { js("Paths.available").include?( @fixture_path ) }
+        it 'makes #add_path available in the javascript as Paths.add' do
+          deny { js("Paths.available").include?( @fixture_path ) }
+          js("Paths.add('#{@fixture_path}')")
+          assert { js("Paths.available").include?( @fixture_path ) }
+        end
       end
     end
     

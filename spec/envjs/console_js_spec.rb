@@ -45,6 +45,16 @@ describe 'console.js' do
     end
   end
   
-  # ??
-  # Envjs.readConsole
+  describe 'foo' do
+    # var line = "";
+    # Envjs.readConsole = function(){
+    #   try{
+    #     line = Ruby.$stdin.gets();
+    #   }catch(e){
+    #     console.log('ERROR : %s', e);
+    #   }
+    #   return line;
+    # };
+    # 
+  end
 end

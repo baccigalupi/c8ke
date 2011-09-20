@@ -35,7 +35,7 @@ describe 'core.js' do
       assert { js('thingy') == 'foo' }
     end
     
-    # it "should eval in another context ???"
+    # it "should eval in another context ???, not sure how to test"
   end
   
   describe 'js threadless-ness' do
@@ -75,29 +75,12 @@ describe 'core.js' do
   
   # Envjs.proxy
   
-  # Envjs.logger
-  # Envjs.getcwd
-  # Envjs.readFromFile
-  # Envjs.writeToFile
-  # Envjs.writeToTempFile
-  # Envjs.readFromFile 
-  # Envjs.deleteFile
-  
   # Envjs.connection
   # Envjs.urlsplit
   # Envjs.localXHR
   
   # Envjs.__defineGetter__
   # Envjs.__defineSetter__
-  # Envjs.appCodeName  = "Envjs";
-  # Envjs.appName      = "Netscape";
-  # Envjs.version = "1.618";//
-  # Envjs.revision = '';
-  # Envjs.gc = function(){ Ruby.gc(); };
-  
-  # Envjs.Configuration
-  # Envjs.config
-  # Envjs.guid
   
   # Envjs.eventLoop
   # Envjs.on

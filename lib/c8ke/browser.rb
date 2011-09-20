@@ -23,6 +23,7 @@ module C8ke
         'raise' => lambda { |message| raise( message ) },
         'version' => RUBY_DESCRIPTION,
         'File' => File,
+        'write_to_file' => lambda { |opts| write_to_file( opts ) },
         'add_path' => lambda{ |path| add_path(path) },
         '$stdout' => $stdout,
         '$stderr' => $stderr
@@ -51,6 +52,12 @@ module C8ke
         self['Paths']['available'] = paths
       else
         self["Ruby"]['paths'] = paths
+      end
+    end
+    
+    def write_to_file(opts)
+      File.open(opts['url'], 'w') do |f|
+        f.write(opts['text'])
       end
     end
     
