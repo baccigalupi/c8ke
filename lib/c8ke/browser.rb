@@ -37,7 +37,7 @@ module C8ke
       ENV.each do |key, value|
         self['Ruby']['ENV'][key] = value
       end
-      self[RestClient] = RestClient
+      self['RestClient'] = RestClient
     end
     
     def paths

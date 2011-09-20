@@ -42,5 +42,9 @@ def events
   js "C8ke.events"
 end
 
+def js_debug
+  js "log.level=0;"
+end
+
 
 MiniTest::Unit.autorun
