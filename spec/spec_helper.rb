@@ -34,6 +34,7 @@ def setup_browser_and_mocking
       C8ke.add_event = function(e) { C8ke.events.push(e); };
       C8ke.clear_events = function(e) { C8ke.events = []; };
       C8ke.mock = function(message) { C8ke.add_event(message) };
+      C8ke.mock_with_message = function(message) { return function(){ C8ke.add_event(message) } }
     JS
   )
 end
