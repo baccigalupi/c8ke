@@ -73,9 +73,22 @@ describe 'xml_http_request.js' do
     
     describe '.send(data, parsedoc, redirect_count)' do
       before do
-        skip
+        mock_responses
+        js <<-JS
+          // more mocking to get things working without everything
+          Envjs.getCookies = C8ke.stub;
+          var window = {};
+          var Document = function(){}
+          var setTimeout = function(fn, time){ fn.call() };
+          
+          request.open(null, 'http://google.com');
+        JS
       end
       
+      it 'make a HTTPConnection' do
+        js "request.send()"
+        assert { events.include?('getting http://google.com/') }
+      end
     end
   end
 end

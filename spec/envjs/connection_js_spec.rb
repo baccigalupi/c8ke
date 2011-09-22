@@ -78,29 +78,13 @@ describe 'connection.js' do
 
   describe 'Envjs.connection' do
     before do
+      mock_responses
       js <<-JS
         // mocking Document data
         var Document = function(){};
         var doc = new Document();
         var XMLSerializer = function(){};
-        XMLSerializer.prototype.serializeToString=  function(data) { C8ke.add_event('serializing data') };
-        
-        // mocking the response
-        var response = {raw_headers: {raw_foo: 'raw foo yo!'}};
-        response.code = function(){return 200;};
-        response.description = function(){ return 'all is well';};
-        response.body = function(){ return 'body' };
-        
-        // mocking the HTTP requests
-        Envjs.localXHR = C8ke.mock;
-        Envjs.HTTPConnection.get = function(url) { 
-          C8ke.add_event('getting ' + url); 
-          return response; 
-        }; 
-        Envjs.HTTPConnection.post = function(url, data) { 
-          C8ke.add_event('posting ' + url + ' with data: ' + data ); 
-          return response;
-        }; 
+        XMLSerializer.prototype.serializeToString = function(data) { C8ke.add_event('serializing data') };
         
         // mocking the xhr object
         var xhr = {method: 'GET', responseHeaders:{}};

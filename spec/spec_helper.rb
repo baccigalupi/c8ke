@@ -33,14 +33,49 @@ def setup_browser_and_mocking
       C8ke.events = [];
       C8ke.add_event = function(e) { C8ke.events.push(e); };
       C8ke.clear_events = function(e) { C8ke.events = []; };
-      C8ke.mock = function(message) { C8ke.add_event(message) };
-      C8ke.mock_with_message = function(message) { return function(){ C8ke.add_event(message) } }
+      
+      // good for mocking a function where you just want to check the first arg
+      C8ke.mock = function(message, return_value) { 
+        C8ke.add_event(message); 
+        return return_value;
+      }; 
+      
+      // goodd for asserting a custom message
+      C8ke.mock_with_message = function(message, return_value) { 
+        return function(){ 
+          C8ke.add_event(message);
+          return return_value;
+        } 
+      }
+      
+      // stub or the null function
+      C8ke.stub = function(return_value){ return return_value };
     JS
   )
 end
 
 def events
   js "C8ke.events"
+end
+
+def mock_responses
+  js <<-JS
+    var response = {raw_headers: {raw_foo: 'raw foo yo!'}};
+    response.code = function(){return 200;};
+    response.description = function(){ return 'all is well';};
+    response.body = function(){ return 'body' };
+  
+    // mocking the HTTP requests
+    Envjs.localXHR = C8ke.mock;
+    Envjs.HTTPConnection.get = function(url) { 
+      C8ke.add_event('getting ' + url); 
+      return response; 
+    }; 
+    Envjs.HTTPConnection.post = function(url, data) { 
+      C8ke.add_event('posting ' + url + ' with data: ' + data ); 
+      return response;
+    };
+  JS
 end
 
 def js_debug
