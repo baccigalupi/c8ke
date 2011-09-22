@@ -1,9 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe 'dom.js' do
-  before do
-    setup_browser_and_mocking
-  end
+  # specs don't change state, add variables, so using $browser for test spec
   
   describe 'defined fundamental object/functions' do
     it 'DOMException' do

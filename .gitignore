@@ -16,4 +16,4 @@ pkg
 tmtags
 *.swp
 
-external/*
+xternal/*

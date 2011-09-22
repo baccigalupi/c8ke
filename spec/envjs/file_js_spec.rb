@@ -1,9 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe 'file.js' do
-  before do
-    setup_browser_and_mocking
-  end
+  # specs don't change state, add variables, so using $browser for test spec
   
   it 'Envjs.getcwd returns the path for the main c8ke directory' do
     assert { js("Envjs.getcwd()") == File.expand_path(File.dirname(__FILE__) + "/../../")}

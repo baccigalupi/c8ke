@@ -21,37 +21,40 @@ Wrong.config.alias_assert :expect
 Wrong.config.color
 
 def js(str)
-  raise "@browser is not setup correctly" unless @browser.is_a?(C8ke::Browser)
-  @browser.eval(str)
+  browser = @browser || $browser
+  raise "browser is not setup correctly" unless browser.is_a?(C8ke::Browser)
+  browser.eval(str)
 end
 
 def setup_browser_and_mocking
   @browser = C8ke::Browser.new
-  js(
-    <<-JS
-      var C8ke = {};
-      C8ke.events = [];
-      C8ke.add_event = function(e) { C8ke.events.push(e); };
-      C8ke.clear_events = function(e) { C8ke.events = []; };
-      
-      // good for mocking a function where you just want to check the first arg
-      C8ke.mock = function(message, return_value) { 
-        C8ke.add_event(message); 
+  js mocking_js
+end
+
+def mocking_js
+  <<-JS
+    var C8ke = {};
+    C8ke.events = [];
+    C8ke.add_event = function(e) { C8ke.events.push(e); };
+    C8ke.clear_events = function(e) { C8ke.events = []; };
+    
+    // good for mocking a function where you just want to check the first arg
+    C8ke.mock = function(message, return_value) { 
+      C8ke.add_event(message); 
+      return return_value;
+    }; 
+    
+    // goodd for asserting a custom message
+    C8ke.mock_with_message = function(message, return_value) { 
+      return function(){ 
+        C8ke.add_event(message);
         return return_value;
-      }; 
-      
-      // goodd for asserting a custom message
-      C8ke.mock_with_message = function(message, return_value) { 
-        return function(){ 
-          C8ke.add_event(message);
-          return return_value;
-        } 
-      }
-      
-      // stub or the null function
-      C8ke.stub = function(return_value){ return return_value };
-    JS
-  )
+      } 
+    }
+    
+    // stub or the null function
+    C8ke.stub = function(return_value){ return return_value };
+  JS
 end
 
 def events
@@ -82,5 +85,8 @@ def js_debug
   js "log.level=0;"
 end
 
+# for use where browser state is not changed
+$browser = C8ke::Browser.new
+$browser.eval(mocking_js)
 
 MiniTest::Unit.autorun
