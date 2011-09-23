@@ -77,7 +77,7 @@ describe 'core.js' do
   # Envjs.proxy
   
   # Envjs.connection
-  # Envjs.urlsplit
+  # Envjs.urlparse.urlsplit
   # Envjs.localXHR
   
   # Envjs.__defineGetter__
